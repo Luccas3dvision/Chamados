@@ -93,10 +93,52 @@ configuração de produção e credenciais.
 - `server/routes/api.php` — rotas da API.
 - `server/database/seeders/DatabaseSeeder.php` — contas e categorias de teste.
 - `client/src/App.vue` — interface Vue atual.
-- `server/tests/Feature/TicketApiTest.php` e
+- `server/tests/Feature/TicketaApiTest.php` e
   `server/tests/Feature/AuthApiTest.php` — testes de CRUD, permissões e login.
 
 ## Registro das próximas sessões
+
+## Próxima ação
+
+## Bloco 4 — Publicar e apresentar (por ordem de impacto)
+
+### 4.1 Deploy no ar
+- [ ] Escolher onde hospedar: front (client) na Vercel ou Netlify; API (server) no Render, Railway ou Fly.io.
+- [ ] Trocar SQLite por PostgreSQL ou MySQL no ambiente de produção (configurar `DB_*` no `.env` do host, sem versionar).
+- [ ] Rodar `php artisan migrate --force` no deploy.
+- [ ] Definir `APP_ENV=production`, `APP_DEBUG=false` e `APP_KEY` próprio.
+- [ ] Definir `CORS_ALLOWED_ORIGINS` com a URL HTTPS exata do front.
+- [ ] Configurar `VITE_API_URL` apontando para a API publicada e gerar o build do client.
+- [ ] Testar o fluxo completo online: login, criar chamado, filtrar, admin alterar status e excluir.
+- [ ] Revisar o armazenamento do token (hoje em `sessionStorage`) e registrar a decisão no README.
+
+### 4.2 Contas de demonstração no deploy
+- [ ] Criar um seeder ou comando separado só para a demo (o seeder atual continua restrito a `local`/`testing`).
+- [ ] Criar 1 usuário e 1 admin de demonstração, com dados fictícios e senhas usadas só na demo.
+- [ ] Colocar essas credenciais no README, na seção da demo online.
+- [ ] Definir como restaurar os dados da demo (ex.: `migrate:fresh` com o seeder de demo) caso alguém apague chamados.
+
+### 4.3 Prints e GIF no README
+- [ ] Tirar prints de: login, tela de usuário (criar e acompanhar chamado), lista com filtros e visão do administrador.
+- [ ] Gravar um GIF curto (20 a 30 segundos) mostrando o fluxo usuário → admin concluindo o chamado.
+- [ ] Salvar as imagens em uma pasta `docs/` e referenciar no README.
+- [ ] Colocar o link da demo online no topo do README.
+
+### 4.4 Repositório no GitHub
+- [ ] Preencher o campo "About" com uma descrição curta (ex.: "Sistema de chamados fullstack com Laravel 12, Sanctum e Vue 3").
+- [ ] Adicionar o link da demo no campo "Website".
+- [ ] Adicionar topics: `laravel`, `vue`, `rest-api`, `sanctum`, `fullstack`, `php`.
+- [ ] Fixar o repositório no perfil do GitHub.
+
+### 4.5 Histórico de commits
+- [ ] A partir de agora, fazer commits pequenos, com mensagens descritivas (ex.: `feat: adiciona filtro por status`).
+- [ ] Decidir sobre o `PROGRESSO.md`: manter e citar no README, ou remover do repositório público.
+
+### 4.6 LinkedIn (depois dos itens 4.1 a 4.4)
+- [ ] Escrever o post: problema, stack, 2 ou 3 decisões técnicas, link da demo e do GitHub, GIF.
+- [ ] Adicionar o projeto na seção "Projetos" do perfil, com as skills (Laravel, Vue, PHP, REST API).
+- [ ] Colocar o repositório na seção "Destaque".
+
 
 ```text
 Data:

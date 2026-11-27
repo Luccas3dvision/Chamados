@@ -151,3 +151,16 @@ npm run build
   de armazenamento de token antes de usar com dados reais.
 - O rate limit do login está habilitado; revise limites e monitoramento para o
   ambiente de produção.
+
+## Deploy na Vercel
+
+O arquivo `vercel.json` na raiz publica o cliente e a API como serviços do mesmo
+projeto: `/api/*` vai para o Laravel e as demais rotas vão para o Vue. Essa
+configuração usa os recursos **Services** e **Container Runtime**, atualmente
+em beta na Vercel, com Dockerfiles em `client/` e `server/`.
+
+Ao importar o repositório, mantenha a raiz do projeto na pasta principal. No
+painel da Vercel, configure pelo menos `APP_ENV=production`, `APP_DEBUG=false`,
+`APP_KEY`, `APP_URL` e as variáveis `DB_*` para um banco MySQL/MariaDB externo.
+Não use `DB_HOST=127.0.0.1`: o banco local e o SQLite não persistem no ambiente
+da Vercel. Faça as migrations no banco externo antes de usar a aplicação.
