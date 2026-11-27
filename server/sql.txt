@@ -1,0 +1,64 @@
+-- ============================================================================
+-- 1. TABELA DE USUÁRIOS
+-- Armazena clientes ('user') que abrem chamados e gestores ('admin')
+-- ============================================================================
+CREATE TABLE users (
+    -- Chave primária (PRIMARY KEY): identifica cada usuário de forma única e
+    -- imutável. BIGINT UNSIGNED evita estourar o limite de IDs com o tempo,
+    -- AUTO_INCREMENT gera o próximo número sozinho e o índice agiliza buscas
+    -- e vínculos com outras tabelas.
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    name VARCHAR(255) NOT NULL, -- Nome completo do usuário
+    email VARCHAR(255) NOT NULL UNIQUE, -- E-mail único para acesso/identificação
+    password VARCHAR(255) NOT NULL, -- Hash da senha (nunca salvar senha em texto puro)
+    role ENUM('admin', 'user') NOT NULL DEFAULT 'user', -- Perfil: gestor ou cliente
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP, -- Data/hora de criação
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Última alteração
+);
+
+-- ============================================================================
+-- 2. TABELA DE CATEGORIAS
+-- Classifica os chamados (ex.: Suporte Técnico, Financeiro, Dúvidas)
+-- ============================================================================
+CREATE TABLE categories (
+    -- Chave primária (PRIMARY KEY): dá identidade única a cada categoria.
+    -- Mesmo que o nome mude no futuro, o 'id' permanece estável e serve de
+    -- referência segura para os chamados vinculados a essa categoria.
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    name VARCHAR(255) NOT NULL, -- Nome da categoria exibido nos cards e filtros
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP, -- Data/hora de criação
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Última alteração
+);
+
+-- ============================================================================
+-- 3. TABELA DE CHAMADOS (TICKETS)
+-- Tabela principal dos chamados exibidos no sistema e no painel do gestor
+-- ============================================================================
+CREATE TABLE tickets (
+    -- Chave primária (PRIMARY KEY): cada chamado ganha um número/ID único.
+    -- Essencial para abrir detalhes, mudar status/prioridade ou excluir o card
+    -- exato sem risco de afetar outro chamado com título semelhante.
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    -- Chaves estrangeiras (FOREIGN KEY): apontam para a PRIMARY KEY (id) das
+    -- tabelas 'users' e 'categories', garantindo que todo chamado pertença a um
+    -- usuário e a uma categoria válidos. ON DELETE CASCADE remove os chamados
+    -- se o usuário ou categoria pai for excluído.
+    user_id BIGINT UNSIGNED NOT NULL,
+    category_id BIGINT UNSIGNED NOT NULL,
+
+    title VARCHAR(255) NOT NULL, -- Título curto exibido no card do chamado
+    description TEXT NOT NULL, -- Detalhamento do problema ou solicitação
+    status ENUM('open', 'in_progress', 'closed') NOT NULL DEFAULT 'open', -- Estado atual do chamado
+    priority ENUM('low', 'medium', 'high') NOT NULL DEFAULT 'medium', -- Nível de prioridade
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP, -- Data/hora de abertura
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Última atualização
+
+    CONSTRAINT fk_tickets_user
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+
+    CONSTRAINT fk_tickets_category
+        FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+);
