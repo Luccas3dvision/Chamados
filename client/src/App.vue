@@ -1,10 +1,11 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
+import defaultDemoAccounts from './demoAccounts.js'
 
 const apiUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '')
 const token = ref(sessionStorage.getItem('api_token') || '')
 const user = ref(null)
-const isDevelopment = import.meta.env.DEV
+const isDemoEnabled = import.meta.env.VITE_DISABLE_DEMO !== 'true'
 const tickets = ref([])
 const categories = ref([])
 const categoriesLoading = ref(false)
@@ -18,7 +19,7 @@ const loginForm = reactive({
   password: '',
 })
 
-const demoAccounts = ref([])
+const demoAccounts = isDemoEnabled ? defaultDemoAccounts : []
 const selectedDemoAccount = ref('')
 
 const ticketForm = reactive({
@@ -35,7 +36,7 @@ const filters = reactive({
 })
 
 function fillDemoAccount() {
-  const account = demoAccounts.value.find(({ email }) => email === selectedDemoAccount.value)
+  const account = demoAccounts.find(({ email }) => email === selectedDemoAccount.value)
   if (!account) return
 
   loginForm.email = account.email
@@ -281,12 +282,6 @@ async function deleteTicket(ticket) {
 
 onMounted(() => {
   restoreSession()
-
-  if (import.meta.env.DEV) {
-    import('./demoAccounts.js').then(({ default: accounts }) => {
-      demoAccounts.value = accounts
-    })
-  }
 })
 </script>
 
@@ -309,7 +304,7 @@ onMounted(() => {
       <h1>Entrar</h1>
       <p class="muted">Use sua conta para acessar os chamados.</p>
 
-      <div v-if="isDevelopment" class="demo-access">
+      <div v-if="demoAccounts.length" class="demo-access">
         <label for="demo-account">Conta de demonstração</label>
         <select id="demo-account" v-model="selectedDemoAccount" @change="fillDemoAccount">
           <option value="">Selecione uma role para preencher o login</option>
@@ -317,7 +312,7 @@ onMounted(() => {
             {{ account.role }} — {{ account.email }}
           </option>
         </select>
-        <p class="muted">Disponível somente durante o desenvolvimento local.</p>
+        <p class="muted">Contas públicas para avaliação do projeto.</p>
       </div>
 
       <form class="form" @submit.prevent="signIn">
